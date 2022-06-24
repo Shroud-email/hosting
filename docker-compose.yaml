@@ -34,6 +34,7 @@ services:
       - db
       - haraka
     environment:
+      - APP_DOMAIN=${APP_DOMAIN}
       - EMAIL_DOMAIN=${EMAIL_DOMAIN}
       - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_DATABASE}
       - SECRET_KEY_BASE=${SECRET_KEY_BASE}
@@ -65,7 +66,7 @@ services:
   certbot:
     build: ./certbot
     environment:
-      - DOMAINS=${EMAIL_DOMAIN}
+      - DOMAINS=${APP_DOMAIN} ${EMAIL_DOMAIN}
       - CERTBOT_EMAILS=${CERTBOT_EMAILS}
       - CERTBOT_TEST_CERT=${CERTBOT_TEST_CERT}
     volumes:
