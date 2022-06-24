@@ -1,0 +1,90 @@
+version: "3.9"
+services:
+
+  db:
+    image: postgres:14.0-alpine3.14
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=${DB_DATABASE}
+
+  haraka:
+    build: ./haraka
+    restart: unless-stopped
+    ports:
+      - "25:25"
+      - "465:465"
+    environment:
+      - EMAIL_DOMAIN=${EMAIL_DOMAIN}
+    volumes:
+      - ./haraka/haraka_config:/app/haraka_config
+
+  web:
+    image: ghcr.io/shroud-email/shroud.email:main
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "1587:1587"
+    depends_on:
+      - db
+      - haraka
+    environment:
+      - EMAIL_DOMAIN=${EMAIL_DOMAIN}
+      - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_DATABASE}
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      - OH_MY_SMTP_API_KEY=${OH_MY_SMTP_API_KEY}
+      - APPSIGNAL_PUSH_API_KEY=${APPSIGNAL_PUSH_API_KEY}
+      - DB_ENCRYPTION_KEY=${DB_ENCRYPTION_KEY}
+      - STRIPE_SECRET=${STRIPE_SECRET}
+      - STRIPE_YEARLY_PRICE=${STRIPE_YEARLY_PRICE}
+      - STRIPE_MONTHLY_PRICE=${STRIPE_MONTHLY_PRICE}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - NOTIFIER_WEBHOOK_URL=${NOTIFIER_WEBHOOK_URL}
+
+  nginx:
+    build: ./nginx
+    restart: unless-stopped
+    environment:
+      - DOMAINS=${EMAIL_DOMAIN}
+      - CERTBOT_EMAILS=${CERTBOT_EMAILS}
+    volumes:
+      - nginx_conf:/etc/nginx/sites
+      - letsencrypt_certs:/etc/letsencrypt
+      - certbot_acme_challenge:/var/www/certbot
+      - ./vhosts:/etc/nginx/vhosts
+      - ./html:/var/www/html
+    ports:
+      - "80:80"
+      - "443:443"
+
+  certbot:
+    build: ./certbot
+    environment:
+      - DOMAINS=${EMAIL_DOMAIN}
+      - CERTBOT_EMAILS=${CERTBOT_EMAILS}
+      - CERTBOT_TEST_CERT=${CERTBOT_TEST_CERT}
+    volumes:
+      - letsencrypt_certs:/etc/letsencrypt
+      - certbot_acme_challenge:/var/www/certbot
+
+  cron:
+    build: ./cron
+    restart: unless-stopped
+    environment:
+      COMPOSE_PROJECT_NAME: "${COMPOSE_PROJECT_NAME}"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./:/workdir:ro
+
+volumes:
+  db_data:
+  nginx_conf:
+    external: true
+  letsencrypt_certs:
+    external: true
+  certbot_acme_challenge:
