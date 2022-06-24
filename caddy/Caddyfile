@@ -1,0 +1,15 @@
+{
+  # Global options
+  storage permissive_file_storage {
+    root "/data"
+  }
+
+  email {$ADMIN_EMAIL}
+}
+
+{$APP_DOMAIN} {
+  reverse_proxy web:8080
+}
+
+{$EMAIL_DOMAIN} {
+}

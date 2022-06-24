@@ -23,6 +23,7 @@ services:
       - EMAIL_DOMAIN=${EMAIL_DOMAIN}
     volumes:
       - ./haraka/haraka_config:/app/haraka_config
+      - pem_certs:/app/haraka_config/config/certs
 
   web:
     image: ghcr.io/shroud-email/shroud.email:main
@@ -47,45 +48,31 @@ services:
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
       - NOTIFIER_WEBHOOK_URL=${NOTIFIER_WEBHOOK_URL}
 
-  nginx:
-    build: ./nginx
+  caddy:
+    build: ./caddy
     restart: unless-stopped
     environment:
-      - DOMAINS=${EMAIL_DOMAIN}
-      - CERTBOT_EMAILS=${CERTBOT_EMAILS}
-    volumes:
-      - nginx_conf:/etc/nginx/sites
-      - letsencrypt_certs:/etc/letsencrypt
-      - certbot_acme_challenge:/var/www/certbot
-      - ./vhosts:/etc/nginx/vhosts
-      - ./html:/var/www/html
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - APP_DOMAIN=${APP_DOMAIN}
+      - EMAIL_DOMAIN=${EMAIL_DOMAIN}
     ports:
       - "80:80"
       - "443:443"
-
-  certbot:
-    build: ./certbot
-    environment:
-      - DOMAINS=${APP_DOMAIN} ${EMAIL_DOMAIN}
-      - CERTBOT_EMAILS=${CERTBOT_EMAILS}
-      - CERTBOT_TEST_CERT=${CERTBOT_TEST_CERT}
     volumes:
-      - letsencrypt_certs:/etc/letsencrypt
-      - certbot_acme_challenge:/var/www/certbot
+      - caddy_data:/data
+      - caddy_config:/config
 
   cron:
     build: ./cron
     restart: unless-stopped
     environment:
-      COMPOSE_PROJECT_NAME: "${COMPOSE_PROJECT_NAME}"
+      - EMAIL_DOMAIN=${EMAIL_DOMAIN}
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./:/workdir:ro
+      - caddy_data:/caddy
+      - pem_certs:/pem
 
 volumes:
   db_data:
-  nginx_conf:
-    external: true
-  letsencrypt_certs:
-    external: true
-  certbot_acme_challenge:
+  caddy_data:
+  caddy_config:
+  pem_certs:

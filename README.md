@@ -18,39 +18,23 @@ Shroud.email uses two subdomains. If your domain is e.g. `example.com`, then the
 | A    | mail.example.com  | your IP             |
 | MX   | mail.example.com  | app.example.com     |
 
-## Step 2: Configuration
+## Step 2: Configure
 
 * `cp example.env .env` and enter your configuration in `.env`.
-* Rename `vhosts/example.com.conf` to use your domain name instead of `example.com`.
-
-## Step 3: Create Docker volumes
+* Update `haraka/haraka_config/config/me` with your `EMAIL_DOMAIN`. It should be a plaintext file with only this value, e.g.
 
 ```
-docker volume create --name=nginx_conf
-docker volume create --name=letsencrypt_certs
+mail.example.com
 ```
 
-## Step 4: Test your TLS configuration
-
-Run `docker compose up`. This will automatically fetch a new TLS certificate from Let's Encrypt. First, it will use the Let's Encrypt staging environment. If this works (and you see `Successfully received certificate`) in the logs, you can proceed. 
-
-## Step 4: Switch to production Let's Encrypt server
-
-Set `CERTBOT_TEST_CERT=0` in your `.env`. Then, re-create the Docker volume that holds the certificates:
-
-```
-docker volume rm letsencrypt_certs
-docker volume create --name=letsencrypt_certs
-```
-
-Finally, re-run `docker compose up`.
-
-## Step 5: Verify HTTPS
-
-Try visiting your domain in your browser. It should show the Shroud.email app using HTTPS!
-
-## Step 6: Run as a daemon
+## Step 3: Run it!
 
 ```
 docker compose up -d
+```
+
+And if you want to view logs:
+
+```
+docker compose logs -f
 ```
