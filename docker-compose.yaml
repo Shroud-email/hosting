@@ -49,7 +49,7 @@ services:
       - NOTIFIER_WEBHOOK_URL=${NOTIFIER_WEBHOOK_URL}
 
   caddy:
-    build: ./caddy
+    image: ghcr.io/shroud-email/caddy-permissive-file-storage:main
     restart: unless-stopped
     environment:
       - ADMIN_EMAIL=${ADMIN_EMAIL}
@@ -60,7 +60,7 @@ services:
       - "443:443"
     volumes:
       - caddy_data:/data
-      - caddy_config:/config
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
 
   cron:
     build: ./cron
@@ -74,5 +74,4 @@ services:
 volumes:
   db_data:
   caddy_data:
-  caddy_config:
   pem_certs:
