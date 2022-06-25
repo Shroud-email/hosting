@@ -9,7 +9,13 @@
 
 {$APP_DOMAIN} {
   reverse_proxy web:8080
+  tls {
+    issuer acme
+  }
 }
 
 {$EMAIL_DOMAIN} {
+  tls {
+    issuer acme
+  }
 }
