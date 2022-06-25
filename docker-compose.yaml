@@ -35,6 +35,7 @@ services:
       - db
       - haraka
     environment:
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
       - APP_DOMAIN=${APP_DOMAIN}
       - EMAIL_DOMAIN=${EMAIL_DOMAIN}
       - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_DATABASE}
