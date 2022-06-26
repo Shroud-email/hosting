@@ -13,9 +13,15 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_DB=${DB_DATABASE}
 
+  spamassassin:
+    image: dinkel/spamassassin
+    restart: unless-stopped
+
   haraka:
     build: ./haraka
     restart: unless-stopped
+    depends_on:
+      - spamassassin
     ports:
       - "25:25"
       - "465:465"

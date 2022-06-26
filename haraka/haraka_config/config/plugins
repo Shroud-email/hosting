@@ -60,7 +60,7 @@ headers
 #data.uribl
 #attachment
 #clamd
-#spamassassin
+spamassassin
 dkim_sign
 #limit
 
