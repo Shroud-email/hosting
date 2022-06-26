@@ -2,3 +2,5 @@
 .env
 haraka/haraka_config/config/dhparams.pem
 haraka/haraka_config/config/me
+haraka/haraka_config/config/dkim
+!haraka/haraka_config/config/dkim/dkim_key_gen.sh

@@ -35,14 +35,14 @@ tls
 #
 # AUTH plugins require TLS before AUTH is advertised, see
 #     https://github.com/haraka/Haraka/wiki/Require-SSL-TLS
-# auth/flat_file
+auth/environment_variable
 # auth/auth_proxy
 # auth/auth_ldap
 
 # MAIL FROM
 # Only accept mail where the MAIL FROM domain is resolvable to an MX record
 mail_from.is_resolvable
-#spf
+spf
 
 # RCPT TO
 # At least one rcpt_to plugin is REQUIRED for inbound email. The simplest
@@ -60,7 +60,7 @@ headers
 #attachment
 #clamd
 #spamassassin
-#dkim_sign
+dkim_sign
 #limit
 
 # QUEUE

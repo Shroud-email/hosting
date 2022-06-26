@@ -21,12 +21,14 @@ services:
       - "465:465"
     environment:
       - EMAIL_DOMAIN=${EMAIL_DOMAIN}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
     volumes:
       - ./haraka/haraka_config:/app/haraka_config
       - pem_certs:/app/haraka_config/config/certs
 
   web:
-    image: ghcr.io/shroud-email/shroud.email:main
+    image: ghcr.io/shroud-email/shroud.email:pr-14
     restart: unless-stopped
     ports:
       - "8080:8080"
@@ -40,7 +42,9 @@ services:
       - EMAIL_DOMAIN=${EMAIL_DOMAIN}
       - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_DATABASE}
       - SECRET_KEY_BASE=${SECRET_KEY_BASE}
-      - OH_MY_SMTP_API_KEY=${OH_MY_SMTP_API_KEY}
+      - SMTP_RELAY=haraka
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
       - APPSIGNAL_PUSH_API_KEY=${APPSIGNAL_PUSH_API_KEY}
       - DB_ENCRYPTION_KEY=${DB_ENCRYPTION_KEY}
       - STRIPE_SECRET=${STRIPE_SECRET}
