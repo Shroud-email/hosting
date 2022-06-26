@@ -86,6 +86,7 @@ Run the following command:
 
 ```
 docker compose exec cron /etc/periodic/daily/bundle_certs
+docker compose restart haraka
 ```
 
 You only need to run this manually once; going forward it will run automatically once per day.
@@ -98,3 +99,16 @@ If not, you can tighten your configuration by updating your DMARC TXT record to 
 ```
 v=DMARC1; p=quarantine; aspf=s; adkim=s; ruf=mailto:admin@example.com
 ```
+
+# Test your setup
+
+Running your own mailserver isn't trivial. Now, you should run some checks against it to ensure
+that you're not running an open relay, that your SPF/DKIM/DMARC are configured properly, and that
+you're not on any blocklists. Even then, it's not uncommon for emails from small mailservers to end
+up in spam.
+
+Here's a non-exhaustive list of useful websites that can help check your configuration:
+
+* [SMTP server test](https://mxtoolbox.com/diagnostic.aspx)
+* [Email deliverability test](https://mxtoolbox.com/deliverability)
+* [Open relay test](https://tools.appriver.com/OpenRelay.aspx)

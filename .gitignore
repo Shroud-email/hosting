@@ -1,5 +1,6 @@
 .DS_Store
 .env
+haraka/haraka_config/queue
 haraka/haraka_config/config/dhparams.pem
 haraka/haraka_config/config/me
 haraka/haraka_config/config/dkim

@@ -25,6 +25,7 @@
 # fcrdns
 # block mails from known bad hosts (see config/dnsbl.zones for the DNS zones queried)
 dnsbl
+backscatterer
 
 # HELO
 #early_talker
