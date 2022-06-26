@@ -10,8 +10,9 @@ You'll need a server running on the public Internet, with ports 25, 80, and 443 
 
 ## Step 1: Create DNS records
 
-Shroud.email uses two domains. If your domain is e.g. `example.com`, then the first domain (`APP_DOMAIN` in `.env`) is where the web UI will be served (e.g. `app.example.com`). The second domain (`EMAIL_DOMAIN`) is the domain used by email aliases. For this, you can use
-your top domain, so that email aliases will end in `@example.com`.
+Shroud.email uses two domains. If your domain is e.g. `example.com`, then the first domain (`APP_DOMAIN` in `.env`) is where the web UI will be served (e.g. `app.example.com`). The second domain (`EMAIL_DOMAIN`) is the domain used by email aliases. For this, you can use your top domain, so that email aliases will end in `@example.com`.
+
+Note that your `APP_DOMAIN` cannot be the same as your `EMAIL_DOMAIN`.
 
 | Type | Name              | Content             | Notes                                                     |
 |------|-------------------|---------------------|-----------------------------------------------------------|
@@ -109,6 +110,7 @@ up in spam.
 
 Here's a non-exhaustive list of useful websites that can help check your configuration:
 
+* [Mail tester](https://www.mail-tester.com/)
 * [SMTP server test](https://mxtoolbox.com/diagnostic.aspx)
 * [Email deliverability test](https://mxtoolbox.com/deliverability)
 * [Open relay test](https://tools.appriver.com/OpenRelay.aspx)
