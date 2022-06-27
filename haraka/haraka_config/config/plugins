@@ -64,6 +64,9 @@ spamassassin
 dkim_sign
 #limit
 
+# Log (outgoing) bounces as WARN
+bounce_logger
+
 # QUEUE
 # queues: discard  qmail-queue  quarantine  smtp_forward  smtp_proxy
 # Queue mail via smtp - see config/smtp_forward.ini for where your mail goes
