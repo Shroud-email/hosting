@@ -4,7 +4,8 @@ Docker Compose configuration for self-hosting Shroud.email.
 
 To self-host [Shroud.email](https://shroud.email/), follow these instructions.
 
-You'll need a server running on the public Internet, with ports 25, 80, and 443 open.
+You'll need a server running on the public Internet, with ports 25, 80, and 443 open. In addition,
+you'll need access keys for an S3-compatible object storage service.
 
 # Configure SPF/DKIM
 

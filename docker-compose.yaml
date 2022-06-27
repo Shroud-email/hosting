@@ -58,6 +58,10 @@ services:
       - STRIPE_MONTHLY_PRICE=${STRIPE_MONTHLY_PRICE}
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
       - NOTIFIER_WEBHOOK_URL=${NOTIFIER_WEBHOOK_URL}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - S3_BUCKET=${S3_BUCKET}
+      - S3_HOST=${S3_HOST}
 
   caddy:
     image: ghcr.io/shroud-email/caddy-permissive-file-storage:main
