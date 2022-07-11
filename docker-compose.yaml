@@ -16,6 +16,8 @@ services:
   spamassassin:
     image: dinkel/spamassassin
     restart: unless-stopped
+    logging:
+      driver: none
 
   haraka:
     build: ./haraka
