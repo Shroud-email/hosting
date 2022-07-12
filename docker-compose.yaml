@@ -64,6 +64,8 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - S3_BUCKET=${S3_BUCKET}
       - S3_HOST=${S3_HOST}
+      - EMAIL_OCTOPUS_API_KEY=${EMAIL_OCTOPUS_API_KEY}
+      - EMAIL_OCTOPUS_LIST_ID=${EMAIL_OCTOPUS_LIST_ID}
 
   caddy:
     image: ghcr.io/shroud-email/caddy-permissive-file-storage:main
