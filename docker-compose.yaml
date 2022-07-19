@@ -27,6 +27,7 @@ services:
     restart: unless-stopped
     depends_on:
       - spamassassin
+      - db
     ports:
       - "25:25"
       - "465:465"
@@ -34,6 +35,10 @@ services:
       - EMAIL_DOMAIN=${EMAIL_DOMAIN}
       - SMTP_USERNAME=${SMTP_USERNAME}
       - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - PGHOST=db
+      - PGUSER=${DB_USER}
+      - PGPASSWORD=${DB_PASSWORD}
+      - PGDATABASE=${DB_DATABASE}
     volumes:
       - ./haraka/haraka_config:/app/haraka_config
       - pem_certs:/app/haraka_config/config/certs

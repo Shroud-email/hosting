@@ -1,7 +1,5 @@
 'use strict';
-// Check RCPT TO domain is in config/host_list.js
 // This is a fork of https://github.com/haraka/Haraka/blob/master/plugins/rcpt_to.in_host_list.js
-// that uses a .js file for config, rather than hard-coded domains
 
 // Previous versions of this plugin (Haraka <= 2.4.0) did not account for
 // relaying users. This plugin now permits relaying clients to send if
@@ -14,13 +12,11 @@
 exports.register = function () {
     const plugin = this;
     plugin.inherits('rcpt_to.host_list_base_shroud');
-
-    plugin.load_host_list();
-    plugin.load_host_list_regex();
 }
 
 exports.hook_rcpt = function (next, connection, params) {
     const plugin = this;
+
     const txn = connection?.transaction;
     if (!txn) return;
 
@@ -32,29 +28,26 @@ exports.hook_rcpt = function (next, connection, params) {
         return next();
     }
 
-    connection.logdebug(plugin, `Checking if ${rcpt} host is in host_list`);
+    plugin.load_host_list((domains) => {
+        connection.logdebug(plugin, `Checking if ${rcpt} host is in host_list`);
 
-    const domain = rcpt.host.toLowerCase();
+        const domain = rcpt.host.toLowerCase();
 
-    if (plugin.in_host_list(domain)) {
-        txn.results.add(plugin, {pass: 'rcpt_to'});
-        return next(OK);
-    }
+        if (domains.has(domain)) {
+            txn.results.add(plugin, {pass: 'rcpt_to'});
+            return next(OK);
+        }
 
-    if (plugin.in_host_regex(domain)) {
-        txn.results.add(plugin, {pass: 'rcpt_to'});
-        return next(OK);
-    }
+        // in this case, a client with relaying privileges is sending FROM a local
+        // domain. For them, any RCPT address is accepted.
+        if (connection.relaying && txn.notes.local_sender) {
+            txn.results.add(plugin, {pass: 'relaying local_sender'});
+            return next(OK);
+        }
 
-    // in this case, a client with relaying privileges is sending FROM a local
-    // domain. For them, any RCPT address is accepted.
-    if (connection.relaying && txn.notes.local_sender) {
-        txn.results.add(plugin, {pass: 'relaying local_sender'});
-        return next(OK);
-    }
-
-    // the MAIL FROM domain is not local and neither is the RCPT TO
-    // Another RCPT plugin may yet vouch for this recipient.
-    txn.results.add(plugin, {msg: 'rcpt!local'});
-    return next();
+        // the MAIL FROM domain is not local and neither is the RCPT TO
+        // Another RCPT plugin may yet vouch for this recipient.
+        txn.results.add(plugin, {msg: 'rcpt!local'});
+        return next();
+    });
 }
