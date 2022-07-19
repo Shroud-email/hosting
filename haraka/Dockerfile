@@ -8,5 +8,6 @@ ENV NODE_ENV production
 WORKDIR /app
 RUN npm install --global Haraka@${version} --unsafe
 COPY ./haraka_config /app/haraka_config
+RUN npm --prefix /app/haraka_config install
 
 ENTRYPOINT ["/sbin/tini", "--", "haraka", "-c", "/app/haraka_config"]
