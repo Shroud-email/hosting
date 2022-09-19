@@ -23,7 +23,7 @@ services:
       driver: none
 
   haraka:
-    build: ./haraka
+    image: gchr.io/shroud-email/haraka:main
     restart: unless-stopped
     depends_on:
       - spamassassin
