@@ -7,6 +7,7 @@ ENV NODE_ENV production
 
 WORKDIR /app
 RUN npm install --global Haraka@${version} --unsafe
+RUN npm install --global pg@8.7.3
 COPY ./haraka_config /app/haraka_config
 
 ENTRYPOINT ["/sbin/tini", "--", "haraka", "-c", "/app/haraka_config"]
