@@ -44,7 +44,7 @@ services:
       - pem_certs:/app/haraka_config/config/certs
 
   web:
-    image: ghcr.io/shroud-email/shroud.email:main
+    image: ghcr.io/shroud-email/shroud.email:1
     restart: unless-stopped
     ports:
       - "8080:8080"
