@@ -1,5 +1,6 @@
 .DS_Store
 .env
+docker-compose.override.yaml
 node_modules/
 haraka/haraka_config/queue
 haraka/haraka_config/config/dhparams.pem
