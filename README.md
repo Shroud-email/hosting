@@ -30,6 +30,15 @@ services run by default, but the widget is not rendered and verification
 is not performed until you set all three `CAP_*` variables on the `web`
 service.
 
+> **Public ingress required.** `CAP_INSTANCE_URL` must be a URL a user's
+> browser can reach over HTTPS — it is rendered into the widget's
+> `data-cap-api-endpoint`, so an `http://` or container-internal URL will
+> fail (mixed-content / unresolvable host) and the widget will never solve.
+> The `cap` service is internal-only in this compose (no host port), so you
+> must put it behind your own ingress (e.g. a Caddy route reverse-proxying
+> `cap:3000` on a subdomain or path) and point `CAP_INSTANCE_URL` at that
+> public HTTPS URL. Cap's `CORS_ORIGIN` is preset to `https://${APP_DOMAIN}`.
+
 ### Setup
 
 1. Generate an admin key and set `CAP_ADMIN_KEY` in `.env`:
@@ -67,7 +76,9 @@ service.
    temporary `ports:` override, or `docker compose exec` into another service
    on the compose network and use `http://cap:3000`.)
 
-4. Set `CAP_SITE_KEY` and `CAP_SECRET_KEY` in `.env` and restart `web`:
+4. Set `CAP_INSTANCE_URL` (your public HTTPS Cap URL — see the ingress
+   note above), `CAP_SITE_KEY`, and `CAP_SECRET_KEY` in `.env`, then
+   restart `web`:
    ```bash
    docker compose restart web
    ```
