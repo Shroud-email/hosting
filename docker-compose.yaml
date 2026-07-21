@@ -43,6 +43,23 @@ services:
       - ./haraka/haraka_config:/app/haraka_config
       - pem_certs:/app/haraka_config/config/certs
 
+  cap:
+    image: tiago2/cap:latest
+    restart: unless-stopped
+    depends_on:
+      - valkey
+    environment:
+      - ADMIN_KEY=${CAP_ADMIN_KEY}
+      - REDIS_URL=redis://valkey:6379
+      - CORS_ORIGIN=https://${APP_DOMAIN}
+
+  valkey:
+    image: valkey/valkey:9-alpine
+    restart: unless-stopped
+    command: valkey-server --save 60 1 --loglevel warning --maxmemory-policy noeviction
+    volumes:
+      - valkey_data:/data
+
   web:
     image: ghcr.io/shroud-email/shroud.email:1
     restart: unless-stopped
@@ -76,6 +93,9 @@ services:
       - LOOPS_ACTIVE_USERS_LIST_ID=${LOOPS_ACTIVE_USERS_LIST_ID}
       - CHATWOOT_MAC_TOKEN=${CHATWOOT_MAC_TOKEN}
       - CHATWOOT_BASE_URL=${CHATWOOT_BASE_URL}
+      - CAP_INSTANCE_URL=http://cap:3000
+      - CAP_SITE_KEY=${CAP_SITE_KEY}
+      - CAP_SECRET_KEY=${CAP_SECRET_KEY}
 
   caddy:
     build: ./caddy
@@ -105,3 +125,4 @@ volumes:
   db_data:
   caddy_data:
   pem_certs:
+  valkey_data:
