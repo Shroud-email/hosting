@@ -74,20 +74,23 @@ services:
       - S3_HOST=${S3_HOST}
       - LOOPS_API_KEY=${LOOPS_API_KEY}
       - LOOPS_ACTIVE_USERS_LIST_ID=${LOOPS_ACTIVE_USERS_LIST_ID}
+      - CHATWOOT_MAC_TOKEN=${CHATWOOT_MAC_TOKEN}
+      - CHATWOOT_BASE_URL=${CHATWOOT_BASE_URL}
 
   caddy:
-    image: ghcr.io/shroud-email/caddy-permissive-file-storage:main
+    build: ./caddy
     restart: unless-stopped
     environment:
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - APP_DOMAIN=${APP_DOMAIN}
       - EMAIL_DOMAIN=${EMAIL_DOMAIN}
+      - BUNNY_API_KEY=${BUNNY_API_KEY}
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - caddy_data:/data
-      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ${CADDYFILE_PATH:-./caddy/Caddyfile}:/etc/caddy/Caddyfile
 
   cron:
     build: ./cron
