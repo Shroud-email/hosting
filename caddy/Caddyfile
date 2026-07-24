@@ -14,7 +14,7 @@
   }
 }
 
-cap.{$APP_DOMAIN} {
+{$CAP_DOMAIN:disabled.localhost} {
   reverse_proxy cap:3000
   tls {
     issuer acme
