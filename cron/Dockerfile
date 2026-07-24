@@ -5,11 +5,11 @@ RUN apk update && \
 
 WORKDIR /workdir
 
-COPY lets-encrypt-r4.pem /workdir/lets-encrypt-r4.pem
-COPY bundle_certs.sh /etc/periodic/daily/bundle_certs
-
-RUN chmod +x /etc/periodic/daily/bundle_certs
+COPY bundle_certs.sh /usr/local/bin/bundle_certs
+RUN chmod +x /usr/local/bin/bundle_certs
 
 VOLUME /pem
 
-CMD ["crond", "-f", "-l", "0"]
+# Run bundle once at boot (populate pem_certs before Haraka's first STARTTLS),
+# then keep the daily crond for renewals. Caddy's fullchain is copied verbatim.
+CMD ["sh", "-c", "bundle_certs; exec crond -f -l 0"]
