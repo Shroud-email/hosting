@@ -6,6 +6,8 @@ Please read our [deployment documentation](https://shroud.email/docs/deployment/
 
 If you just want to get up and running with Shroud.email quickly, you can sign up for our hosted version [here](https://app.shroud.email/users/register).
 
+Copy `haraka/haraka_config/config/me.example` to `haraka/haraka_config/config/me` and set your mail hostname.
+
 ## Living on the edge
 
 The committed `docker-compose.yaml` tracks the stable `:1` image. If you'd rather
