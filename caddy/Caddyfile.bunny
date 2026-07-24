@@ -14,6 +14,13 @@
   }
 }
 
+{$CAP_DOMAIN:disabled.localhost} {
+  reverse_proxy cap:3000
+  tls {
+    dns bunny {env.BUNNY_API_KEY}
+  }
+}
+
 {$EMAIL_DOMAIN} {
   tls {
     issuer acme
