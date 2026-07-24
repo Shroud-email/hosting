@@ -78,18 +78,19 @@ services:
       - CHATWOOT_BASE_URL=${CHATWOOT_BASE_URL}
 
   caddy:
-    image: ghcr.io/shroud-email/caddy-permissive-file-storage:main
+    build: ./caddy
     restart: unless-stopped
     environment:
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - APP_DOMAIN=${APP_DOMAIN}
       - EMAIL_DOMAIN=${EMAIL_DOMAIN}
+      - BUNNY_API_KEY=${BUNNY_API_KEY}
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - caddy_data:/data
-      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ${CADDYFILE_PATH:-./caddy/Caddyfile}:/etc/caddy/Caddyfile
 
   cron:
     build: ./cron
