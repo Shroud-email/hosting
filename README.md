@@ -62,7 +62,7 @@ service.
      -d "{\"admin_key\":\"$CAP_ADMIN_KEY\"}")
    TOKEN=$(echo "$RESP" | jq -r .session_token)
    HASH=$(echo "$RESP" | jq -r .hashed_token)
-   BEARER=$(printf '{"token":"%s","hash":"%s"}' "$TOKEN" "$HASH" | base64)
+   BEARER=$(printf '{"token":"%s","hash":"%s"}' "$TOKEN" "$HASH" | base64 -w0)
 
    # Create the site key with the Bearer session
    curl -X POST http://<cap-host>:3000/server/keys \
