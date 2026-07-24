@@ -22,3 +22,4 @@ services:
       - WATCHTOWER_LABEL_ENABLE=true   # ONLY update opted-in containers — never db
       - WATCHTOWER_POLL_INTERVAL=300   # poll GHCR every 5 min
       - WATCHTOWER_CLEANUP=true        # delete old images after updating
+      - DOCKER_API_VERSION=1.44        # watchtower 1.7.1's SDK defaults to 1.25, too old for Docker Engine 28+
