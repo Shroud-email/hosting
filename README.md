@@ -4,7 +4,7 @@ Docker Compose configuration for self-hosting Shroud.email.
 
 Please read our [deployment documentation](https://shroud.email/docs/deployment/self-host) on our website.
 
-If you just want to get up and running with Shroud.email quickly, you can sign up for our hosted version [here](https://app.shroud.email/users/register).
+If you want to get up and running with Shroud.email quickly, and don't want to maintain your own mailserver, you can sign up for our hosted version [here](https://app.shroud.email/users/register).
 
 Copy `haraka/haraka_config/config/me.example` to `haraka/haraka_config/config/me` and set your mail hostname.
 
@@ -24,7 +24,7 @@ leave the defaults get HTTP-01 and never need a Bunny key.
 
 ## Living on the edge
 
-The committed `docker-compose.yaml` tracks the stable `:1` image. If you'd rather
+The committed `docker-compose.yaml` tracks the stable image. If you'd rather
 run the latest `:edge` build (rebuilt on every push to `main`) and have it
 auto-update, copy the example override and bring the stack up:
 
@@ -40,20 +40,13 @@ image is published.
 ## Cap CAPTCHA
 
 The compose file includes a [Cap](https://trycap.dev) self-hosted CAPTCHA
-instance (the `cap` + `valkey` services). Cap protects the signup, login,
-and password-reset forms. It is **opt-in at the application level**: the
+instance. It is **opt-in at the application level**: the
 services run by default, but the widget is not rendered and verification
 is not performed until you set all three `CAP_*` variables on the `web`
 service.
 
 > **Public ingress required.** `CAP_INSTANCE_URL` must be a URL a user's
-> browser can reach over HTTPS — it is rendered into the widget's
-> `data-cap-api-endpoint`, so an `http://` or container-internal URL will
-> fail (mixed-content / unresolvable host) and the widget will never solve.
-> The `cap` service is internal-only in this compose (no host port), so you
-> must put it behind your own ingress (e.g. a Caddy route reverse-proxying
-> `cap:3000` on a subdomain or path) and point `CAP_INSTANCE_URL` at that
-> public HTTPS URL. Cap's `CORS_ORIGIN` is preset to `https://${APP_DOMAIN}`.
+> browser can reach over HTTPS.
 
 ### Setup
 
@@ -67,37 +60,11 @@ service.
    docker compose up -d cap valkey
    ```
 
-3. Create a site key with the strongest challenge combination
-   (RSW time-lock + JS instrumentation). Cap authenticates with a
-   session token issued by logging in with the `ADMIN_KEY` — the `Bot`
-   scheme is for Valkey-stored API keys, not the admin key:
-   ```bash
-   # Log in with ADMIN_KEY → get a session token + hash
-   RESP=$(curl -s -X POST http://<cap-host>:3000/auth/login \
-     -H "Content-Type: application/json" \
-     -d "{\"admin_key\":\"$CAP_ADMIN_KEY\"}")
-   TOKEN=$(echo "$RESP" | jq -r .session_token)
-   HASH=$(echo "$RESP" | jq -r .hashed_token)
-   BEARER=$(printf '{"token":"%s","hash":"%s"}' "$TOKEN" "$HASH" | base64 -w0)
+3. Create a site key.  Cap authenticates with a
+   session token issued by logging in with the `ADMIN_KEY. Create a `siteKey` and `secretKey` in the Cap UI.
 
-   # Create the site key with the Bearer session
-   curl -X POST http://<cap-host>:3000/server/keys \
-     -H "Authorization: Bearer $BEARER" \
-     -H "Content-Type: application/json" \
-     -d '{"name":"shroud-email","instrumentation":true,"rsw":true}'
-   ```
-   The response returns `siteKey` and `secretKey` (shown only once — save it).
-   (`<cap-host>:3000` must be reachable — the `cap` service has no host port
-   mapping in the production compose, so run this from the host with a
-   temporary `ports:` override, or `docker compose exec` into another service
-   on the compose network and use `http://cap:3000`.)
-
-4. Set `CAP_INSTANCE_URL` (your public HTTPS Cap URL — see the ingress
-   note above), `CAP_SITE_KEY`, and `CAP_SECRET_KEY` in `.env`, then
+4. Set `CAP_INSTANCE_URL`, `CAP_SITE_KEY`, and `CAP_SECRET_KEY` in `.env`, then
    restart `web`:
    ```bash
    docker compose restart web
    ```
-
-Cap verifies tokens are single-use. The secret key never reaches the
-browser; only the site key is public.
