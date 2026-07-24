@@ -16,6 +16,6 @@
 
 {$EMAIL_DOMAIN} {
   tls {
-    dns bunny {env.BUNNY_API_KEY}
+    issuer acme
   }
 }
