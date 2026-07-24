@@ -44,7 +44,7 @@ services:
       - pem_certs:/app/haraka_config/config/certs
 
   cap:
-    image: tiago2/cap:latest
+    image: tiago2/cap:3
     restart: unless-stopped
     depends_on:
       - valkey
