@@ -4,8 +4,6 @@ services:
   db:
     image: postgres:14.0-alpine3.14
     restart: unless-stopped
-    ports:
-      - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
     environment:
@@ -30,7 +28,6 @@ services:
       - db
     ports:
       - "25:25"
-      - "465:465"
     environment:
       - EMAIL_DOMAIN=${EMAIL_DOMAIN}
       - SMTP_USERNAME=${SMTP_USERNAME}
@@ -63,9 +60,6 @@ services:
   web:
     image: ghcr.io/shroud-email/shroud.email:1
     restart: unless-stopped
-    ports:
-      - "8080:8080"
-      - "1587:1587"
     depends_on:
       - db
       - haraka
